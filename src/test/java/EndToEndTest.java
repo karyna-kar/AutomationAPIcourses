@@ -47,7 +47,7 @@ public class EndToEndTest {
                 .assertThat().body("msg", equalTo("Address successfully updated"));
     }
 
-    //Step3 - Gettintg new item + extract respond
+    //Step3 - Getting new item + extract respond
     @Test (dependsOnMethods={"UpdateItemTest"})
     public void GetItemTest()
     {
