@@ -37,11 +37,29 @@ public class ComplexJSONParseMethods {
         }
         return courses;
     }
-    public static Integer getRPACopies(String response){
-        JsonPath js = new JsonPath(response);
-        int title = js.get("courses[2].title");
-        return title;
 
+    public static Integer getCopiesOfCourse(String response, String course){
+        JsonPath js = new JsonPath(response);
+        int copies =0;
+        int count = getTotalAmountCourses(response);
+        for (int i = 0; i<count; i++)
+        {
+            if ((js.getString("courses["+i+"].title")).equalsIgnoreCase(course)) {
+                copies = js.getInt("courses[" + i + "].copies");
+            }
+        }
+        return copies;
+    }
+
+    public static Integer getSumCourse(String response){
+        JsonPath js = new JsonPath(response);
+        int sum =0;
+        int count = getTotalAmountCourses(response);
+        for (int i = 0; i<count; i++)
+        {
+           sum=sum + (js.getInt("courses[" + i + "].price")*js.getInt("courses[" + i + "].copies"));
+        }
+        return sum;
     }
 
 }

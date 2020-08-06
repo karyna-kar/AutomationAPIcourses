@@ -1,4 +1,6 @@
 import files.ComplexJSONPayloads;
+import groovy.lang.DelegatesTo;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.ComplexJSONParseMethods;
 
@@ -44,8 +46,16 @@ public class ComplexJSONTest {
 
     //Print no of copies sold by RPA Course
     @Test
-    public void RPACopiesTest()
+    public void CopiesOfCourseTest()
     {
+        int copies = ComplexJSONParseMethods.getCopiesOfCourse(response, "RPA");
+        System.out.print(copies);
+    }
 
+   // Verify if Sum of all Course prices matches with Purchase Amount
+    @Test
+    public void SumCoursesTest()
+    {
+        Assert.assertEquals(ComplexJSONParseMethods.getSumCourse(response), ComplexJSONParseMethods.getPurchaseAmount(response));
     }
 }
