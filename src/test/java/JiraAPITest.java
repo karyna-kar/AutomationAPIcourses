@@ -47,22 +47,6 @@ public class JiraAPITest extends BeforeRequestJira {
         CommentID = JIRAParseMethods.getCommentID(response);
     }
 
-    //Get created comment
-    @Test(dependsOnMethods={"addCommentTest"})
-    public void getCommentTest()
-    {
-        RestAssured.baseURI = "http://localhost:8080";
-        String response = given()
-                .log().all()
-                .header("cookie", cookie)
-                .contentType("application/json")
-                .when().get("/rest/api/2/issue/"+IssueID+"/comment")
-                .then()
-                .log().all()
-                .assertThat().statusCode(200)
-                .extract().response().asString();
-    }
-
     //Add Attachment to the issue
     @Test(dependsOnMethods={"addCommentTest"})
     public void addAttachmentTest()
@@ -84,8 +68,43 @@ public class JiraAPITest extends BeforeRequestJira {
         AttachmentID = JIRAParseMethods.getAttachmentID(response);
     }
 
-    //Get Attachment
+    //Get created issue
     @Test(dependsOnMethods={"addAttachmentTest"})
+    public void getIssueTest()
+    {
+        RestAssured.baseURI = "http://localhost:8080";
+        String response = given()
+                .log().all()
+                .header("cookie", cookie)
+                .contentType("application/json")
+                .when().get("/rest/api/2/issue/"+IssueID)
+                .then()
+                .log().all()
+                .assertThat().statusCode(200)
+                .extract().response().asString();
+    }
+
+
+
+    //Get created comment
+    @Test(dependsOnMethods={"getIssueTest"})
+    public void getCommentTest()
+    {
+        RestAssured.baseURI = "http://localhost:8080";
+        String response = given()
+                .log().all()
+                .header("cookie", cookie)
+                .contentType("application/json")
+                .when().get("/rest/api/2/issue/"+IssueID+"/comment")
+                .then()
+                .log().all()
+                .assertThat().statusCode(200)
+                .extract().response().asString();
+    }
+
+
+    //Get Attachment
+    @Test(dependsOnMethods={"getCommentTest"})
     public void getAttachmentTest()
     {
         RestAssured.baseURI = "http://localhost:8080";
@@ -131,7 +150,7 @@ public class JiraAPITest extends BeforeRequestJira {
     }
 
     //Delete issue
-    @Test (dependsOnMethods={"deleteCommentTest"})
+    @Test (dependsOnMethods={"deleteAttachmentTest"})
     public void deleteIssueTest() {
         RestAssured.baseURI = "http://localhost:8080";
         String response =    given()
