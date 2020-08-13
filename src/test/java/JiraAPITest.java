@@ -3,11 +3,14 @@ import io.restassured.RestAssured;
 import org.testng.annotations.Test;
 import pages.JIRAParseMethods;
 
+import java.io.File;
+
 import static io.restassured.RestAssured.given;
 
 public class JiraAPITest extends BeforeRequestJira {
     private String IssueID;
-    private String CommentD;
+    private String CommentID;
+    private String AttachmentID;
     //Create an issue
     @Test
     public void createIssueTest() {
@@ -41,27 +44,94 @@ public class JiraAPITest extends BeforeRequestJira {
                 .assertThat().statusCode(201)
                 .extract().response().asString();
 
-        CommentD = JIRAParseMethods.getCommentID(response);
+        CommentID = JIRAParseMethods.getCommentID(response);
+    }
+
+    //Get created comment
+    @Test(dependsOnMethods={"addCommentTest"})
+    public void getCommentTest()
+    {
+        RestAssured.baseURI = "http://localhost:8080";
+        String response = given()
+                .log().all()
+                .header("cookie", cookie)
+                .contentType("application/json")
+                .when().get("/rest/api/2/issue/"+IssueID+"/comment")
+                .then()
+                .log().all()
+                .assertThat().statusCode(200)
+                .extract().response().asString();
+    }
+
+    //Add Attachment to the issue
+    @Test(dependsOnMethods={"addCommentTest"})
+    public void addAttachmentTest()
+    {
+        RestAssured.baseURI = "http://localhost:8080";
+        String response = given()
+                .log().all()
+                .header("cookie", cookie)
+                .header("X-Atlassian-Token", "no-check")
+                .contentType("multipart/form-data")
+                //.body(JIRAPayloads.createIssueCommentPayload())
+                .multiPart("file", new File("jira.txt"))
+                .when().post("/rest/api/2/issue/"+IssueID+"/attachments")
+                .then()
+                .log().all()
+                .assertThat().statusCode(200)
+                .extract().response().asString();
+
+        AttachmentID = JIRAParseMethods.getAttachmentID(response);
+    }
+
+    //Get Attachment
+    @Test(dependsOnMethods={"addAttachmentTest"})
+    public void getAttachmentTest()
+    {
+        RestAssured.baseURI = "http://localhost:8080";
+        String response = given()
+                .log().all()
+                .header("cookie", cookie)
+                .contentType("application/json")
+                .when().get("/rest/api/2/attachment/"+AttachmentID)
+                .then()
+                .log().all()
+                .assertThat().statusCode(200)
+                .extract().response().asString();
     }
 
     //Delete a comment of the issue
-    @Test (enabled = false, dependsOnMethods={"addCommentTest"})
+    @Test (dependsOnMethods={"getAttachmentTest"})
     public void deleteCommentTest() {
         RestAssured.baseURI = "http://localhost:8080";
         String response = given()
                 .log().all()
                 .header("cookie", cookie)
                 .contentType("application/json")
-                .when().delete("/rest/api/2/issue/"+IssueID+"/comment/"+CommentD)
+                .when().delete("/rest/api/2/issue/"+IssueID+"/comment/"+ CommentID)
                 .then()
                 .log().all()
                 .assertThat().statusCode(204)
                 .extract().response().asString();
     }
 
+    //Delete an attachment of the issue
+    @Test (dependsOnMethods={"deleteCommentTest"})
+    public void deleteAttachmentTest() {
+        RestAssured.baseURI = "http://localhost:8080";
+        String response = given()
+                .log().all()
+                .header("cookie", cookie)
+                .contentType("application/json")
+                .when().delete("/rest/api/2/attachment/"+AttachmentID)
+                .then()
+                .log().all()
+                .assertThat().statusCode(204)
+                .extract().response().asString();
+    }
 
-        //Delete issue
-    @Test (enabled = false, dependsOnMethods={"deleteCommentTest"})
+    //Delete issue
+    @Test (dependsOnMethods={"deleteCommentTest"})
     public void deleteIssueTest() {
         RestAssured.baseURI = "http://localhost:8080";
         String response =    given()

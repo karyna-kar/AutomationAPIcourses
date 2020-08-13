@@ -24,4 +24,11 @@ public class JIRAParseMethods {
         JsonPath js = new JsonPath(response);
         return js.get("id");
     }
+
+
+    public static String getAttachmentID(String response)
+    {
+        JsonPath js = new JsonPath(response);
+        return js.get("[0].id");
+    }
 }
