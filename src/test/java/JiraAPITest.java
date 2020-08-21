@@ -59,7 +59,6 @@ public class JiraAPITest extends BeforeRequestJira {
                 .extract().response().asString();
     }
 
-
         //Delete issue
     @Test (enabled = false, dependsOnMethods={"deleteCommentTest"})
     public void deleteIssueTest() {
