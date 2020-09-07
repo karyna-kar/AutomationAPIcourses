@@ -1,4 +1,5 @@
 package utils;
+
 import io.restassured.authentication.PreemptiveBasicAuthScheme;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
@@ -10,8 +11,8 @@ public class APISpecification {
     public static RequestSpecification getRequestSpecification() {
 
         PreemptiveBasicAuthScheme auth = new PreemptiveBasicAuthScheme();
-        auth.setUserName("Openbravo");
-        auth.setPassword("openbravo");
+        auth.setUserName(Property.getProperty("auth_UserName"));
+        auth.setPassword(Property.getProperty("auth_Password"));
 
         return new RequestSpecBuilder()
                 .setBaseUri(EndPoints.BASEURL)
