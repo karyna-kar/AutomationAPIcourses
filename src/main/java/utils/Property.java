@@ -17,10 +17,10 @@ public class Property {
 
         } catch (FileNotFoundException e) {
             //Logs.info("Properties file is absent");
-           // Logs.error(e.getMessage());
+            // Logs.error(e.getMessage());
             System.out.println(e.getMessage());
         } catch (IOException e) {
-           // Logs.error(e.getMessage());
+            // Logs.error(e.getMessage());
             System.out.println(e.getMessage());
         }
         return prop;
