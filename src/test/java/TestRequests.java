@@ -14,13 +14,26 @@ public class TestRequests {
     private static RequestSpecification requestSpec = APISpecification.getRequestSpecification();
     private static ResponseSpecification responseSpec = APISpecification.getResponseSpecification();
 
-    private int CountryID = 101;
+    private int CountryID;
     private Response response = null;
 
-
-    // Search for Artist
+    // Search all Countries
     @Test
     public void searchCountryTest() {
+        response = given()
+                .spec(requestSpec)
+                .expect().spec(responseSpec)
+                .log().all()
+                .when()
+                .get(EndPoints.COUNTRY);
+
+        Assert.assertNotEquals(Parser.getTotalNumbersOfCountries(response), 0);
+        CountryID = Parser.getCountryID(response);
+    }
+
+    // Search Countries by ID
+    @Test (dependsOnMethods={"searchCountryTest"})
+    public void searchCountryByIDTest() {
                response =  given()
                 .spec(requestSpec)
                 .expect().spec(responseSpec)
@@ -28,6 +41,21 @@ public class TestRequests {
                 .when()
                 .get(EndPoints.COUNTRY + "/" + CountryID);
 
-         Assert.assertEquals(Parser.getCountryID(response), 101);
+         Assert.assertEquals(Parser.getCountryID(response), 100);
     }
+
+    // Search Total Number of County regions
+    @Test// (dependsOnMethods={"searchCountryByIDTest"})
+    public void checkRegionListTest() {
+        response =  given()
+                .spec(requestSpec)
+                .expect().spec(responseSpec)
+                .log().all()
+                .when()
+                .get(EndPoints.COUNTRY + "/" + 100);
+
+      //  Assert.assertNotEquals(Parser.getTotalNumbersOfRegions(response), 0);
+        Assert.assertEquals(Parser.getTotalNumbersOfRegions(response), 0);
+    }
+
 }
