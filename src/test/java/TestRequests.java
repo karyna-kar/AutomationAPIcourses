@@ -6,16 +6,18 @@ import org.testng.annotations.Test;
 import pages.Parser;
 import utils.APISpecification;
 import utils.EndPoints;
+import utils.Logs;
 
 import static io.restassured.RestAssured.given;
 
 public class TestRequests {
 
-    private static RequestSpecification requestSpec = APISpecification.getRequestSpecification();
-    private static ResponseSpecification responseSpec = APISpecification.getResponseSpecification();
+    private static final RequestSpecification requestSpec = APISpecification.getRequestSpecification();
+    private static final ResponseSpecification responseSpec = APISpecification.getResponseSpecification();
 
     private int CountryID;
     private Response response = null;
+
 
     // Search all Countries
     @Test
@@ -23,12 +25,11 @@ public class TestRequests {
         response = given()
                 .spec(requestSpec)
                 .expect().spec(responseSpec)
-                .log().all()
                 .when()
                 .get(EndPoints.COUNTRY);
-
         Assert.assertNotEquals(Parser.getTotalNumbersOfCountries(response), 0);
         CountryID = Parser.getCountryID(response);
+        Logs.info("Request: " + requestSpec.log().method().toString());
     }
 
     // Search Countries by ID
@@ -37,7 +38,6 @@ public class TestRequests {
                response =  given()
                 .spec(requestSpec)
                 .expect().spec(responseSpec)
-                .log().all()
                 .when()
                 .get(EndPoints.COUNTRY + "/" + CountryID);
 
@@ -50,7 +50,7 @@ public class TestRequests {
         response =  given()
                 .spec(requestSpec)
                 .expect().spec(responseSpec)
-                .log().all()
+              //  .log().all()
                 .when()
                 .get(EndPoints.COUNTRY + "/" + 100);
 
