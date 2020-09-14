@@ -35,7 +35,6 @@ public class APISpecification {
                 .build();
 
        // Logs.info(resSpec.log().all().toString());
-
         return resSpec;
     }
 }

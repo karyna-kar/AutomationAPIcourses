@@ -16,11 +16,9 @@ public class Property {
             prop = property.getProperty(propKey);
 
         } catch (FileNotFoundException e) {
-            //Logs.info("Properties file is absent");
-            // Logs.error(e.getMessage());
-            System.out.println(e.getMessage());
+            Logs.error("Properties file is absent", e);
         } catch (IOException e) {
-            // Logs.error(e.getMessage());
+            Logs.error(e);
             System.out.println(e.getMessage());
         }
         return prop;
